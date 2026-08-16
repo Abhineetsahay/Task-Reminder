@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 interface FormState {
   username: string;
@@ -19,7 +19,7 @@ export default function SignInPage() {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event: SubmitEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setLoading(true);
@@ -51,19 +51,19 @@ export default function SignInPage() {
 
   return (
     <div
-      className={`relative isolate min-h-screen overflow-hidden bg-[radial-gradient(circle_at_10%_10%,#fff7e8_0%,#f6f7fb_40%,#edf2ff_100%)] px-4 py-10 sm:px-6 md:px-10 `}
+      className="relative isolate min-h-screen overflow-hidden bg-[radial-gradient(circle_at_10%_10%,#1e293b_0%,#0f172a_45%,#020617_100%)] px-4 py-10 sm:px-6 md:px-10"
     >
-      <div className="pointer-events-none absolute -left-20 top-16 h-64 w-64 rounded-full bg-orange-300/35 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-8 h-72 w-72 rounded-full bg-sky-300/35 blur-3xl" />
+      <div className="pointer-events-none absolute -left-20 top-16 h-64 w-64 rounded-full bg-orange-700/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-8 h-72 w-72 rounded-full bg-cyan-700/25 blur-3xl" />
 
-      <main className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl border border-white/70 bg-white/80 shadow-[0_24px_70px_-30px_rgba(15,23,42,0.45)] backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
+      <main className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-700/70 bg-slate-900/80 shadow-[0_24px_70px_-30px_rgba(0,0,0,0.8)] backdrop-blur md:grid-cols-[1.1fr_0.9fr]">
         <section className="relative flex flex-col justify-between gap-10 bg-[#0f172a] p-8 text-white sm:p-10">
           <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(56,189,248,0.15),transparent_45%),linear-gradient(240deg,rgba(249,115,22,0.22),transparent_45%)]" />
           <div className="relative space-y-5">
             <p className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em]">
               Welcome Back
             </p>
-            <h1 className="font-(--font-playfair-display) text-4xl leading-tight sm:text-5xl">
+            <h1 className="text-4xl leading-tight sm:text-5xl">
               Sign in and keep your plans on track.
             </h1>
             <p className="max-w-md text-sm text-slate-200 sm:text-base">
@@ -83,17 +83,17 @@ export default function SignInPage() {
         </section>
 
         <section className="flex items-center p-6 sm:p-10">
-          <form className="w-full space-y-5" onSubmit={() => handleSubmit}>
+          <form className="w-full space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-1">
-              <h2 className="text-2xl font-semibold text-slate-900">
+              <h2 className="text-2xl font-semibold text-slate-100">
                 Create your account
               </h2>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-300">
                 Start by entering your account details below.
               </p>
             </div>
 
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               Username
               <input
                 type="text"
@@ -102,12 +102,12 @@ export default function SignInPage() {
                   setForm((prev) => ({ ...prev, username: event.target.value }))
                 }
                 required
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-900/40"
                 placeholder="jane_doe"
               />
             </label>
 
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               Email
               <input
                 type="email"
@@ -116,12 +116,12 @@ export default function SignInPage() {
                   setForm((prev) => ({ ...prev, email: event.target.value }))
                 }
                 required
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-900/40"
                 placeholder="jane@example.com"
               />
             </label>
 
-            <label className="block space-y-2 text-sm font-medium text-slate-700">
+            <label className="block space-y-2 text-sm font-medium text-slate-300">
               Password
               <input
                 type="password"
@@ -131,7 +131,7 @@ export default function SignInPage() {
                 }
                 required
                 minLength={6}
-                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-900/40"
                 placeholder="At least 6 characters"
               />
             </label>
