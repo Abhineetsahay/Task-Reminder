@@ -31,6 +31,38 @@ function toDateTimeLocalValue(date: Date) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+function toIsoFromDateTimeLocalValue(value: string) {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+  return parsed.toISOString();
+}
+
+const CLIENT_TIMEZONE_FIX_DEPLOYED_AT_MS = Date.parse("2026-08-21T00:00:00.000Z");
+
+function formatDueDateTime(task: TaskItem) {
+  const dueDate = new Date(task.endTime);
+  if (Number.isNaN(dueDate.getTime())) {
+    return task.endTime;
+  }
+
+  const createdAtMs = Date.parse(task.createdAt);
+  const isLegacyTask =
+    !Number.isNaN(createdAtMs) &&
+    createdAtMs < CLIENT_TIMEZONE_FIX_DEPLOYED_AT_MS;
+
+  if (!isLegacyTask) {
+    return dueDate.toLocaleString();
+  }
+
+  // Older tasks stored local wall-clock values as UTC; shift once for display.
+  const correctedLegacyDueDate = new Date(
+    dueDate.getTime() + dueDate.getTimezoneOffset() * 60 * 1000,
+  );
+  return correctedLegacyDueDate.toLocaleString();
+}
+
 export default function TasksPage() {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +73,7 @@ export default function TasksPage() {
   const [endTime, setEndTime] = useState(() =>
     toDateTimeLocalValue(new Date(Date.now() + 60 * 60 * 1000)),
   );
-
+  
   const loadTasks = async (
     options: { showLoading?: boolean; clearError?: boolean } = {},
   ) => {
@@ -62,7 +94,7 @@ export default function TasksPage() {
         setError(payload.error ?? "Unable to load tasks.");
         return;
       }
-
+      
       setTasks(payload.tasks ?? []);
     } catch {
       setError("Network error while loading tasks.");
@@ -113,13 +145,20 @@ export default function TasksPage() {
     setCreating(true);
 
     try {
+      const isoEndTime = toIsoFromDateTimeLocalValue(endTime);
+
+      if (!isoEndTime) {
+        setError("Please provide a valid due date.");
+        return;
+      }
+
       const response = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           taskName,
           taskDescription,
-          endTime,
+          endTime: isoEndTime,
         }),
       });
 
@@ -313,7 +352,7 @@ export default function TasksPage() {
           ) : (
             <ul className="mt-4 space-y-3">
               {tasks.map((task) => {
-                const due = new Date(task.endTime);
+                const dueLabel = formatDueDateTime(task);
                 return (
                   <li
                     key={task.id}
@@ -332,7 +371,7 @@ export default function TasksPage() {
                           </p>
                         ) : null}
                         <p className="text-xs text-slate-400">
-                          Due: {due.toLocaleString()}
+                          Due: {dueLabel}
                         </p>
                       </div>
 
